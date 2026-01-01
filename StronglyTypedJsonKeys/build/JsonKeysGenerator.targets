@@ -1,0 +1,14 @@
+<Project>
+    <ItemGroup>
+        <CompilerVisibleItemMetadata Include="AdditionalFiles"
+                                     MetadataName="GenerateKeys" />
+        <CompilerVisibleItemMetadata Include="AdditionalFiles"
+                                     MetadataName="RootKeyPath" />
+        <CompilerVisibleItemMetadata Include="AdditionalFiles"
+                                     MetadataName="KeysPrefix" />
+        <CompilerVisibleItemMetadata Include="AdditionalFiles"
+                                     MetadataName="ClassName" />
+        <CompilerVisibleItemMetadata Include="AdditionalFiles"
+                                     MetadataName="CapitalizeGeneratedKeys" />
+    </ItemGroup>
+</Project>
