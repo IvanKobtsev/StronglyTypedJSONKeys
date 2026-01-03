@@ -22,6 +22,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageLicenseFile>license.txt</PackageLicenseFile>
         <PackageIcon>icon.png</PackageIcon>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
     <ItemGroup>
@@ -47,5 +48,8 @@
           <PackagePath>\</PackagePath>
         </None>
         <None Include="build/JsonKeysGenerator.targets" Pack="true" PackagePath="build/" />
+        <None Include="$(OutputPath)\StronglyTypedJsonKeys.dll"
+              Pack="true"
+              PackagePath="analyzers/dotnet/cs" />
     </ItemGroup>
 </Project>
