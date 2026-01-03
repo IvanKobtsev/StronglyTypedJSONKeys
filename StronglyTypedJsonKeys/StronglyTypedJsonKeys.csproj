@@ -10,6 +10,18 @@
         <PackageId>$(AssemblyName)</PackageId>
         <Title>Strongly Typed JSON Keys Generator</Title>
         <Authors>IvanKobtsev</Authors>
+        <PackageTags>roslyn source-generator json json-keys code-generation configuration localization intellisense dotnet</PackageTags>
+        <IncludeSymbols>True</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <NeutralLanguage>en</NeutralLanguage>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Copyright>MIT</Copyright>
+        <Description>Strongly Typed JSON Keys is a .NET Roslyn source generator that reads JSON files at build time and generates static classes containing const string fields for each JSON key.</Description>
+        <PackageProjectUrl>https://github.com/IvanKobtsev/StronglyTypedJSONKeys</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/IvanKobtsev/StronglyTypedJSONKeys</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseFile>license.txt</PackageLicenseFile>
+        <PackageIcon>icon.png</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,6 +34,18 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="..\icon.png">
+          <Pack>True</Pack>
+          <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\license.txt">
+          <Pack>True</Pack>
+          <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\README.md">
+          <Pack>True</Pack>
+          <PackagePath>\</PackagePath>
+        </None>
         <None Include="build/JsonKeysGenerator.targets" Pack="true" PackagePath="build/" />
     </ItemGroup>
 </Project>
