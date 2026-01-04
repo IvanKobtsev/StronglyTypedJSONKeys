@@ -12,7 +12,7 @@ internal sealed class NestedJsonObjectModel : IEquatable<NestedJsonObjectModel>
     public NestedJsonObjectModel? Parent { get; }
     public string KeyName { get; }
     public IReadOnlyList<NestedJsonObjectModel> Properties { get; }
-    public LocalizationKeysGenerator.GenerationOptions? GenerationOptions { get; set; }
+    public LocalizationKeysGenerator.AdditionalFileConfig? GenerationConfig { get; set; }
 
     public NestedJsonObjectModel(NestedJsonObjectModel? parent, string keyName, JsonObject json)
     {
@@ -41,11 +41,11 @@ internal sealed class NestedJsonObjectModel : IEquatable<NestedJsonObjectModel>
         if (Parent != null) return Parent.GetPath(KeyName + "." + childPath);
         
         var sb = new StringBuilder();
-        sb.Append(GenerationOptions!.KeysPrefix);
+        sb.Append(GenerationConfig!.KeysPrefix);
             
-        if (GenerationOptions?.RootKeyPath != string.Empty)
+        if (GenerationConfig?.RootKeyPath != string.Empty)
         {
-            sb.Append(GenerationOptions!.RootKeyPath);
+            sb.Append(GenerationConfig!.RootKeyPath);
             sb.Append(".");
         }
             

@@ -48,17 +48,14 @@ public sealed class LocalizationKeysGenerator : IIncrementalGenerator
                         File = additionalText,
                         Enabled = 
                             bool.TryParse(generateKeys, out var enabled) && enabled,
-                        RootKeyPath = rootKeyPath ?? string.Empty,
-                        KeysPrefix = keysPrefix ?? string.Empty,
-                        ClassName = className
-                                    ?? ClassNameConverter.FileNameToClassName(additionalText.Path),
-                        CapitalizeGeneratedKeys = bool.TryParse(capitalizeGeneratedKeys, out var cgk) && cgk
+                        FileConfig = new AdditionalFileConfig(rootKeyPath ?? string.Empty, keysPrefix ?? string.Empty, className
+                            ?? ClassNameConverter.FileNameToClassName(additionalText.Path), bool.TryParse(capitalizeGeneratedKeys, out var cgk) && cgk)
                     };
                 }
             )
             .Where(f => f.Enabled);
 
-        var serverErrorsProvider = jsonFiles.Select(
+        var jsonObjectsProvider = jsonFiles.Select(
             static (fileWithConfig, ct) =>
             {
                 var jsonFile = fileWithConfig.File;
@@ -71,7 +68,7 @@ public sealed class LocalizationKeysGenerator : IIncrementalGenerator
                     );
 
                 var pathKeys =
-                    fileWithConfig.RootKeyPath != string.Empty ? fileWithConfig.RootKeyPath.Split('.') : [];
+                    fileWithConfig.FileConfig.RootKeyPath != string.Empty ? fileWithConfig.FileConfig.RootKeyPath.Split('.') : [];
                 var json =
                     JsonNode.Parse(jsonText)
                     ?? throw new InvalidOperationException($"Invalid JSON in '{jsonFile.Path}'.");
@@ -93,33 +90,33 @@ public sealed class LocalizationKeysGenerator : IIncrementalGenerator
                     currentObject = childObject;
                 }
 
-                return new NestedJsonObjectModel(null, string.Empty, currentObject)
+                return new NestedJsonObjectModel(null, GenerationHelper.ConfigToString(fileWithConfig.FileConfig), currentObject)
                 {
-                    GenerationOptions = new GenerationOptions(fileWithConfig.RootKeyPath, fileWithConfig.KeysPrefix, fileWithConfig.ClassName, fileWithConfig.CapitalizeGeneratedKeys)
+                    GenerationConfig = fileWithConfig.FileConfig
                 };
             }
         );
 
         context.RegisterSourceOutput(
-            serverErrorsProvider,
+            jsonObjectsProvider,
             static (spc, jsonObject) =>
             {
                 var sb = new StringBuilder();
-                sb.Append("public static class " + jsonObject.GenerationOptions!.ClassName + " {");
+                sb.Append("public static class " + jsonObject.GenerationConfig!.ClassName + " {");
 
-                EmitObject(sb, jsonObject, 1, jsonObject.GenerationOptions);
+                EmitObject(sb, jsonObject, 1, jsonObject.GenerationConfig);
 
                 sb.Append("\n}");
 
                 spc.AddSource(
-                    jsonObject.GenerationOptions!.ClassName + ".g.cs",
+                    jsonObject.GenerationConfig!.ClassName + ".g.cs",
                     SourceText.From(sb.ToString(), Encoding.UTF8)
                 );
             }
         );
     }
 
-    internal sealed record GenerationOptions(
+    internal sealed record AdditionalFileConfig(
         string RootKeyPath,
         string KeysPrefix,
         string ClassName,
@@ -136,7 +133,7 @@ public sealed class LocalizationKeysGenerator : IIncrementalGenerator
         StringBuilder sb,
         NestedJsonObjectModel jsonObject,
         int nestingLevel,
-        GenerationOptions generationOptions
+        AdditionalFileConfig generationOptions
     )
     {
         foreach (var node in jsonObject.Properties)
