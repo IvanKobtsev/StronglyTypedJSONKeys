@@ -48,13 +48,11 @@ public sealed class LocalizationKeysGenerator : IIncrementalGenerator
                         File = additionalText,
                         Enabled = 
                             bool.TryParse(generateKeys, out var enabled) && enabled,
-                        Config = new GenerationOptions(
-                            rootKeyPath ?? string.Empty,
-                            keysPrefix ?? string.Empty,
-                            className
-                                ?? ClassNameConverter.FileNameToClassName(additionalText.Path),
-                            bool.TryParse(capitalizeGeneratedKeys, out var cgk) && cgk
-                        )
+                        RootKeyPath = rootKeyPath ?? string.Empty,
+                        KeysPrefix = keysPrefix ?? string.Empty,
+                        ClassName = className
+                                    ?? ClassNameConverter.FileNameToClassName(additionalText.Path),
+                        CapitalizeGeneratedKeys = bool.TryParse(capitalizeGeneratedKeys, out var cgk) && cgk
                     };
                 }
             )
@@ -64,7 +62,6 @@ public sealed class LocalizationKeysGenerator : IIncrementalGenerator
             static (fileWithConfig, ct) =>
             {
                 var jsonFile = fileWithConfig.File;
-                var config = fileWithConfig.Config;
 
                 var jsonText = jsonFile.GetText(ct)!.ToString();
 
@@ -74,7 +71,7 @@ public sealed class LocalizationKeysGenerator : IIncrementalGenerator
                     );
 
                 var pathKeys =
-                    config.RootKeyPath != string.Empty ? config.RootKeyPath.Split('.') : [];
+                    fileWithConfig.RootKeyPath != string.Empty ? fileWithConfig.RootKeyPath.Split('.') : [];
                 var json =
                     JsonNode.Parse(jsonText)
                     ?? throw new InvalidOperationException($"Invalid JSON in '{jsonFile.Path}'.");
@@ -98,7 +95,7 @@ public sealed class LocalizationKeysGenerator : IIncrementalGenerator
 
                 return new NestedJsonObjectModel(null, string.Empty, currentObject)
                 {
-                    GenerationOptions = config
+                    GenerationOptions = new GenerationOptions(fileWithConfig.RootKeyPath, fileWithConfig.KeysPrefix, fileWithConfig.ClassName, fileWithConfig.CapitalizeGeneratedKeys)
                 };
             }
         );
@@ -115,7 +112,7 @@ public sealed class LocalizationKeysGenerator : IIncrementalGenerator
                 sb.Append("\n}");
 
                 spc.AddSource(
-                    "i18nTranslationKeys.g.cs",
+                    jsonObject.GenerationOptions!.ClassName + ".g.cs",
                     SourceText.From(sb.ToString(), Encoding.UTF8)
                 );
             }

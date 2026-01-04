@@ -1,18 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Version>1.0.1</Version>
+        <Version>1.0.3</Version>
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <IsRoslynAnalyzer>true</IsRoslynAnalyzer>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
         <PackageId>$(AssemblyName)</PackageId>
         <Title>Strongly Typed JSON Keys Generator</Title>
         <Authors>IvanKobtsev</Authors>
         <PackageTags>roslyn source-generator json json-keys code-generation configuration localization intellisense dotnet</PackageTags>
         <IncludeSymbols>True</IncludeSymbols>
+        <IsRoslynComponent>true</IsRoslynComponent>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <NeutralLanguage>en</NeutralLanguage>
         <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -23,16 +25,17 @@
         <RepositoryType>git</RepositoryType>
         <PackageLicenseFile>license.txt</PackageLicenseFile>
         <PackageIcon>icon.png</PackageIcon>
-        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
+        <PackageReference Include="System.Text.Json" Version="8.0.6" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Text.Json" Version="8.0.6" PrivateAssets="all" />
+        <None Update="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="./" />
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
 
     <ItemGroup>
@@ -48,9 +51,6 @@
           <Pack>True</Pack>
           <PackagePath>\</PackagePath>
         </None>
-        <None Include="build/JsonKeysGenerator.targets" Pack="true" PackagePath="build/" />
-        <None Include="$(OutputPath)\StronglyTypedJsonKeys.dll"
-              Pack="true"
-              PackagePath="analyzers/dotnet/cs" />
+        <None Include="build/StronglyTypedJsonKeys.targets" Pack="true" PackagePath="build/" />
     </ItemGroup>
 </Project>

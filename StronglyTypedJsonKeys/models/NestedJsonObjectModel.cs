@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.Json.Nodes;
 using StronglyTypedJsonKeys.generators;
 
@@ -37,12 +38,21 @@ internal sealed class NestedJsonObjectModel : IEquatable<NestedJsonObjectModel>
 
     public string GetPath(string? childPath)
     {
-        if (Parent == null)
+        if (Parent != null) return Parent.GetPath(KeyName + "." + childPath);
+        
+        var sb = new StringBuilder();
+        sb.Append(GenerationOptions!.KeysPrefix);
+            
+        if (GenerationOptions?.RootKeyPath != string.Empty)
         {
-            return GenerationOptions!.KeysPrefix + GenerationOptions.RootKeyPath + childPath;
+            sb.Append(GenerationOptions!.RootKeyPath);
+            sb.Append(".");
         }
+            
+        sb.Append(childPath);
+            
+        return sb.ToString();
 
-        return Parent.GetPath(KeyName + "." + childPath);
     }
 
     public bool Equals(NestedJsonObjectModel? secondObject)
